@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using DigitalWatch.Properties;
 
@@ -16,6 +17,8 @@ namespace DigitalWatch
             appIcon.Icon = Resources.clock;
 
             (new FormMover(this, watchLabel)).ActivateMover();
+
+            Application.ApplicationExit += Application_ApplicationExit;
         }
 
         protected override async void OnLoad(EventArgs e)
@@ -139,9 +142,14 @@ namespace DigitalWatch
 
         protected override async void OnClosing(CancelEventArgs e)
         {
-            await Settings.WriteSettings(ForeColor, BackColor, _borderStyle, Font, DesktopLocation);
+            await SaveSettings();
 
             base.OnClosing(e);
+        }
+
+        private async Task SaveSettings()
+        {
+            await Settings.WriteSettings(ForeColor, BackColor, _borderStyle, Font, DesktopLocation);
         }
 
         private void hideToolStripMenuItem_Click(object sender, EventArgs e)
@@ -156,6 +164,11 @@ namespace DigitalWatch
                 Hide();
                 hideToolStripMenuItem.Checked = true;
             }
+        }
+
+        private async void Application_ApplicationExit(object sender, EventArgs e)
+        {
+            await SaveSettings();
         }
     }
 }
