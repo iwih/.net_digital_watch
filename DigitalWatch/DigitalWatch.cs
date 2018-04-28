@@ -24,11 +24,15 @@ namespace DigitalWatch
         protected override async void OnLoad(EventArgs e)
         {
             var settings = await Settings.ReadSettings();
-            ForeColor = settings.ForeColor;
-            BackColor = settings.BackColor;
-            Font = new Font(settings.FontFamily, settings.FontSize);
-            _borderStyle = settings.BorderStyle;
-            DesktopLocation = settings.Location;
+
+            if (settings != null)
+            {
+                ForeColor = settings.ForeColor;
+                BackColor = settings.BackColor;
+                Font = new Font(settings.FontFamily, settings.FontSize);
+                _borderStyle = settings.BorderStyle;
+                DesktopLocation = settings.Location;
+            }
 
             ShowTime();
             tikTokTimer.Start();

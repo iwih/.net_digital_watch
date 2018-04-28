@@ -74,6 +74,7 @@ namespace DigitalWatch
         internal static async Task<Settings> ReadSettings()
         {
             var jsonStr = string.Empty;
+            if (!File.Exists(SettingsPath)) return null;
 
             try
             {
