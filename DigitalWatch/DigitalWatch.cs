@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DigitalWatch.Properties;
+using Microsoft.Win32;
 
 namespace DigitalWatch
 {
@@ -19,6 +20,7 @@ namespace DigitalWatch
             (new FormMover(this, watchLabel)).ActivateMover();
 
             Application.ApplicationExit += Application_ApplicationExit;
+            SystemEvents.SessionEnded += SystemEvents_SessionEnded;
         }
 
         protected override async void OnLoad(EventArgs e)
@@ -171,6 +173,11 @@ namespace DigitalWatch
         }
 
         private async void Application_ApplicationExit(object sender, EventArgs e)
+        {
+            await SaveSettings();
+        }
+
+        private async void SystemEvents_SessionEnded(object sender, SessionEndedEventArgs e)
         {
             await SaveSettings();
         }
