@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Globalization;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DigitalWatch.Properties;
@@ -55,7 +56,7 @@ namespace DigitalWatch
         {
             var timeFormat = TimeFormat;
 
-            watchLabel.Text = DateTime.Now.ToString(timeFormat);
+            watchLabel.Text = DateTime.Now.ToString(timeFormat, CultureInfo.InvariantCulture);
             var supposedSize =
                 new Size(
                     watchLabel.Width + watchLabel.Margin.All + 4,
