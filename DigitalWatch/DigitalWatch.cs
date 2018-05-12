@@ -17,7 +17,7 @@ namespace DigitalWatch
             Icon = Resources.clock;
             appIcon.Icon = Resources.clock;
 
-            (new FormMover(this, watchLabel)).ActivateMover();
+            (new FormMover(this, hoursMinutesLabel)).ActivateMover();
 
             Application.ApplicationExit += Application_ApplicationExit;
             SystemEvents.SessionEnded += SystemEvents_SessionEnded;
@@ -36,6 +36,8 @@ namespace DigitalWatch
                 DesktopLocation = settings.Location;
             }
 
+            SetDateToLabel();
+
             ShowTime();
             tikTokTimer.Start();
 
@@ -44,39 +46,36 @@ namespace DigitalWatch
             base.OnLoad(e);
         }
 
+        private void SetDateToLabel()
+        {
+            dateLabel.Text = DateTime.Now.ToString("ddd\r\n dd-MM \r\nyyyy").Replace(" ", string.Empty);
+        }
+
+        protected override void OnFontChanged(EventArgs e)
+        {
+            hoursMinutesLabel.Font = new Font(Font.FontFamily, Font.Size * 2f);
+            var smallFont = new Font(Font.FontFamily, Font.Size * 0.8f);
+            secondsLabel.Font = smallFont;
+            dateLabel.Font = smallFont;
+
+            base.OnFontChanged(e);
+        }
+
         private void tikTokTimer_Tick(object sender, EventArgs e)
         {
             ShowTime();
         }
 
-        private bool _flicker;
-
         private void ShowTime()
         {
-            var timeFormat = TimeFormat;
-
-            watchLabel.Text = DateTime.Now.ToString(timeFormat);
-            var supposedSize =
-                new Size(
-                    watchLabel.Width + watchLabel.Margin.All + 4,
-                    watchLabel.Height + watchLabel.Margin.All + 4);
-
-            if (!Size.Equals(supposedSize))
-                Size = supposedSize;
+            var hoursAndMinutes = DateTime.Now.ToString(HOURS_MINTUES_FORMAT);
+            if (hoursMinutesLabel.Text != hoursAndMinutes)
+                hoursMinutesLabel.Text = hoursAndMinutes;
+            secondsLabel.Text = DateTime.Now.ToString(SECONDS_FORMAT);
         }
 
-        private const string COLONED_FORMAT = "dddd dd-MM-yyyy\r\nHH:mm:ss";
-        public const string NONCOLONED_FORMAT = "dddd dd-MM-yyyy\r\nHH:mm ss";
-
-        private string TimeFormat
-        {
-            get
-            {
-                var timeFormat = _flicker ? COLONED_FORMAT : NONCOLONED_FORMAT;
-                _flicker = !_flicker;
-                return timeFormat;
-            }
-        }
+        private const string HOURS_MINTUES_FORMAT = "HH:mm";
+        private const string SECONDS_FORMAT = "ss";
 
         private ButtonBorderStyle _borderStyle = ButtonBorderStyle.Dashed;
 
@@ -180,6 +179,16 @@ namespace DigitalWatch
         private async void SystemEvents_SessionEnded(object sender, SessionEndedEventArgs e)
         {
             await SaveSettings();
+        }
+
+        private void hideDateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hideDateToolStripMenuItem.Checked = !hideDateToolStripMenuItem.Checked;
+
+            if (hideDateToolStripMenuItem.Checked)
+                dateLabel.Text = string.Empty;
+            else
+                SetDateToLabel();
         }
     }
 }
