@@ -66,12 +66,21 @@ namespace DigitalWatch
             ShowTime();
         }
 
+        private DateTime _previousDateTime;
         private void ShowTime()
         {
-            var hoursAndMinutes = DateTime.Now.ToString(HOURS_MINTUES_FORMAT);
+            var currentTime = DateTime.Now;
+
+            var hoursAndMinutes = currentTime.ToString(HOURS_MINTUES_FORMAT);
             if (hoursMinutesLabel.Text != hoursAndMinutes)
                 hoursMinutesLabel.Text = hoursAndMinutes;
-            secondsLabel.Text = DateTime.Now.ToString(SECONDS_FORMAT);
+
+            secondsLabel.Text = currentTime.ToString(SECONDS_FORMAT);
+
+            if (currentTime.Date != _previousDateTime.Date)
+                SetDateToLabel();
+
+            _previousDateTime = currentTime;
         }
 
         private const string HOURS_MINTUES_FORMAT = "HH:mm";
